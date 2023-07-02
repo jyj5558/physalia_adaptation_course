@@ -5,10 +5,14 @@ Although you should have familiarized with working on a UNIX environment before 
 
 First, we'll create a folder and copy some of the files we will need today in this new folder
 ```
+cd $CLUSTER_SCRATCH/
+mkdir AdapGenom/
+cd AdapGenom/
+
 mkdir scripts
 cd scripts
-cp ~/Share/physalia_adaptation_course/00_documents/* . ###this command copies all files (*) that were in the folder 00_documents into the folder you're currently in
-cp -r ~/Share/physalia_adaptation_course/01_day1/01_scripts . ###this command copies a folder (note the -r juste after the command "cp" in the folder 00_documents into the folder you're currently in
+cp -r ../Share/physalia_adaptation_course/00_documents/ . ###this command copies all files (*) that were in the folder 00_documents into the folder you're currently in
+cp -r ../Share/physalia_adaptation_course/01_day1/01_scripts . ###this command copies a folder (note the -r juste after the command "cp" in the folder 00_documents into the folder you're currently in
 ```
 Use ```ls``` to get a list of the files we have copied over, and look at the content of one of those files with the ```less``` command.
 ```
