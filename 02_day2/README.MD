@@ -7,17 +7,19 @@ We have put inside that folder the similar files that you produced yesterday wit
 So if you have not managed to finish the tutorial, if you forgot where the files were generated yesterday (and even if you don't have access to the server and work on your own computer), don't worry they are here.
 
 ```
-cd #make sure you are at the root of the directory 
-cp -r ~/Share/physalia_adaptation_course/02_day2 .
+cd $CLUSTER_SCRATCH/AdapGenom/ #make sure you are at the root of the directory 
+cp -r $CLUSTER_SCRATCH/AdapGenom/Share/physalia_adaptation_course/02_day2 .
 cd 02_day2
 ```
 
 
 There are many ways, approaches, software and formulas to calculate F<sub>ST</sub>, a relative measure of population differentiation. Here we will use mainly VCFtools. If you want to explore Stacks for summary statistics in your spare time you will find a Stacks specific tutorial [here](./summary_stats_stacks.md)
 
-In VCFtools you need to provide the list of samples for each population to include in the calculation and a VCF file with all your variants and associated information. For the reduced dataset, including only 80 individuals from Greenland and Canada, you will find the list of samples for each of the two lineages in the ```~/scripts``` folder. The VCF file name is saved as ```populations.snps.vcf```, one for each of the datsets we analyzed. For example, to calculate F<sub>ST</sub> in the smallest of the three datsets we produced, type
+In VCFtools you need to provide the list of samples for each population to include in the calculation and a VCF file with all your variants and associated information. For the reduced dataset, including only 80 individuals from Greenland and Canada, you will find the list of samples for each of the two lineages in the ```$CLUSTER_SCRATCH/AdapGenom/scripts``` folder. The VCF file name is saved as ```populations.snps.vcf```, one for each of the datsets we analyzed. For example, to calculate F<sub>ST</sub> in the smallest of the three datsets we produced, type
 ```
 gunzip populations_2lin_random/populations.snps.vcf.gz
+ml biocontainers
+ml vcftools
 vcftools --vcf populations_2lin_random/populations.snps.vcf --weir-fst-pop documents/pop_canada40.txt --weir-fst-pop documents/pop_greenland40.txt  --out FST/fst_2lin
 ```
 
@@ -56,6 +58,10 @@ In fact, window estimates are a practical way to summarize data and to reduce th
 Now, to visualise it, we recommend that you can download the file from the server to your own computer with Filezilla. The best is to download the whole folder 02-day2, so that you will always work with the same folder/file names and hierarchy as the rest of the group.
 
 On your local computer, in R studio, simply set your working directory to 02-day2
+```
+ml r/4.1.2
+R
+```
 
 To do Manhattan plot, there are great packages like QQMan
 https://cran.r-project.org/web/packages/qqman/vignettes/qqman.html
