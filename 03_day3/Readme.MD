@@ -4,7 +4,7 @@ Yesterday, we observed that our dataset included two highly divergent lineages (
 
 To start, please copy the folder Day 3 into your home directory adn open it with cd
 ```
-cp -r ~/Share/physalia_adaptation_course/03_day3 .
+cp -r $CLUSTER_SCRATCH/AdapGenom/Share/physalia_adaptation_course/03_day3 .
 cd 03_day3 
 ```
 Please remember we will work from this directory the whole day. When copying on your local computer please copy the whole day3 folder and all its subarchitecture and try to respect that architecture, that will be easier to find your files. 
@@ -57,6 +57,8 @@ the --out parameter allows us to give a prefix, on which plink will add a suffix
 ```
 #prepare files
 gunzip 02_data/canada.vcf.gz
+ml biocontainers
+ml plink
 plink --vcf 02_data/canada.vcf --make-bed --out 02_data/canada
 
 #give variables
@@ -284,7 +286,9 @@ python Toolbox/reshaper_baypass.py 02_data/canada.pruned.recode.vcf 02_data/popm
 ```
 
 ####  run baypass controlled for population structure
-We installed Baypass on the ```Share/``` folder. However, your working session doesn't know where it have been installed. So we have to add the path to baypass. In such, use the following command line : ```echo "export PATH=$PATH:~/Share/baypass_2.3/sources/" >> ~/.bashrc```
+We should install Baypass on the ```Share/``` folder.
+Visit: http://www1.montpellier.inra.fr/CBGP/software/baypass/index.html.
+However, your working session doesn't know where it have been installed. So we have to add the path to baypass. In such, use the following command line : ```echo "export PATH=$PATH:/scratch/bell/jeon96/AdapGenom/Share/baypass_2.4/sources/" >> ~/.bashrc```
 
 After, you have to source the config file where we added this line using this command ```source ~/.bashrc```.
 
