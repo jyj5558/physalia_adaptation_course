@@ -27,6 +27,7 @@ Ok, now we are ready to convert our VCF files to the StAMPP file format. The too
 chmod +x Toolbox/00-VCF_Reshaper.sh
 bash Toolbox/00-VCF_Reshaper.sh -v populations_canada_random/populations.snps.vcf -p documents/popmap_canada.txt -f StAMPP -o canada
 ```
+* edit the 00-VCF_Reshaper.sh inside to add "ml biocontainers \ ml vcftools" before calling functions.
 
 Then check your current folder ``ls``, you should be able to see your ``.StAMPP`` input file (*quick overview of the file with less -S command).
 
