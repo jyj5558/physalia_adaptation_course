@@ -304,6 +304,14 @@ Because LEA is a R package, you need to work in R environment. We recommand that
 ### Step 1: Prepare input files
 To conduct population structure analyses, LEA needs its own input format (LEA geno-like format). Great 👍, the authors of the R package give us a useful function to do it easely !
 
+To install LEA,
+```
+if (!require("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+
+BiocManager::install("LEA")
+```
+
 ```
 #load the library
 library(LEA)
