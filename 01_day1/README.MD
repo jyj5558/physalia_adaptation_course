@@ -91,15 +91,17 @@ To find the script that we used and a step-by-step breakdown of that script, cli
 
 Now, move to your home folder, make a new folder for the alignment files and create a symbolic link to the bamfiles stored in the```~/Share``` folder. With a symbolic link, you add the files to a path of your choice, but because they are not physically there you're not taking up the space.
 ```
-cd 
+cd $CLUSTER_SCRATCH/AdapGenom
 mkdir bamfiles
 cd bamfiles
-ln -s ~/Share/bamfiles/*.bam .
+ln -s ../Share/bamfiles/*.bam .
 ```
 
 #### SAM/BAM
 The alignment file contains much more information than the raw data .fastq files. In addition to all the information contained in the .fastq files, we now have information of the quality of the alignment and the position of where those reads mapped in the genome. Although we produce .sam files with the alignment, we quickly convert them to .bam, which is in binary format. These files are not readable directly but you can use 
 ```
+ml biocontainers
+ml samtools
 samtools view -h A_01.bam | less 
 ```
 With the pipe sign ```|```, we pipe the output of the first command into the second command.
@@ -127,14 +129,14 @@ Although the modules ```gstacks``` and ```populations``` can be run in one go wi
 
 Please copy the scripts inside your folder and make executable the one we are interested in 
 ```
-cd # come back to your home
+cd $CLUSTER_SCRATCH/AdapGenom # come back to your home
 cd scripts #get inside your scripts
 #now copy files inside your 01_scripts folder. (replace the one you may have copy earlier as I edited them)
-cp ~/Share/physalia_adaptation_course/01_day1/01_scripts/*.sh 01_scripts/
+cp ../Share/physalia_adaptation_course/01_day1/01_scripts/*.sh 01_scripts/
 #make the file executable
-chmod +x ~/scripts/01_scripts/stacks_gstacks.sh ### notice that the script name has turned green?
+chmod +x ./01_scripts/stacks_gstacks.sh ### notice that the script name has turned green?
 #open the file
-less ~/scripts/01_scripts/stacks_gstacks.sh
+less ./01_scripts/stacks_gstacks.sh
 #to exit, press 'q'
 ```
 
@@ -152,12 +154,12 @@ This is simple and self explanatory: we tell the server that we are writing in b
 
 To run this job, we can either use the command ```bash``` before the script or make it executable before running it:
 ```
-nohup bash ~/scripts/01_scripts/stacks_gstacks.sh >& gstacks.log &
+nohup bash ./01_scripts/stacks_gstacks.sh >& gstacks.log &
 ```
 or
 ```
 
-nohup ~/scripts/01_scripts/stacks_gstacks.sh >& gstacks.log &
+nohup ./01_scripts/stacks_gstacks.sh >& gstacks.log &
 ```
 
 Note that we use ```nohup``` to send the job to the background, so that we have the terminal free for us to do other things and can save the stdout to a file of our choice.
@@ -176,13 +178,14 @@ G3: Genes|Genomes|Genetics, 7(5), 1393–1404.
 ```
 To expedite things (and while the first gstacks script runs), we can focus on a smaller dataset. This includes only 80 individuals, 40 from two populations in Canada and 40 from 2 populations in Greenland. Run
 ```
-nohup bash ~/scripts/01_scripts/stacks_gstacks_2lin.sh >& gstacks_2lin.log &
+nohup bash ./01_scripts/stacks_gstacks_2lin.sh >& gstacks_2lin.log &
 ```
 Once we have our catalog of variants in the ```gstacks_2lin``` folder we can run ```populations``` to apply filters and print variant files in different formats. As ```populations``` is very fast for this small dataset, we can run it from the terminal. But first you make the folder where you want your results to be saved.
 ```
-cd ~/stacks
+cd ../stacks
 mkdir populations_2lin_random
-populations -P ~/stacks/gstacks_2lin/ -M ~/scripts/00_documents/popmap_2lin.txt -O ~/stacks/populations_2lin_random -t 4 -p 2 -r 0.8 --fstats --vcf --genepop --structure --write-random-snp
+ml stacks
+populations -P ./gstacks_2lin/ -M ../scripts/00_documents/popmap_2lin.txt -O ./populations_2lin_random -t 4 -p 2 -r 0.8 --fstats --vcf --genepop --structure --write-random-snp
 ```
 Let's break the scripts down to understand what ```populations``` is doing here.
 
@@ -207,6 +210,7 @@ Also note that the files within each folders have pretty standardized names (che
 Although we applied stringent filters to minimize the amount of missing data, these are applied at the SNP level and we could have single individuals that for a variety of reasons (e.g., poor DNA quality, low DNA concentration, pipetting errors) have a high proportion of missing data. We can check the amount of missing data for each individuals with
 ```
 cd populations_2lin_random
+ml vcftools
 vcftools --vcf populations.snps.vcf --missing-indv --out missing
 sort -rk5,5 missing.imiss | less # with this you will visualize individuals by % of missing data, from the highest to the lowest
 ```
@@ -217,12 +221,22 @@ In this case % of missing data are below 5%, so we don't need to discard any ind
 As you can see if you  do ```ls``` to list the files in one of the folders storing the output from your ```populations``` runs, STACKS produces many output files. The manual provides a thorough explanation of all the different file formats. Go to <https://catchenlab.life.illinois.edu/stacks/manual/> and scroll down to section 6.6. For each output type, open the corresponding file on the server, and take your time to explore them.
 
 Here you've executed the pipeline on 80 individuals. Before we wrap up today, you need to create the same input files for the full dataset (280 individuals listed in popmap_all.txt) and the Canada dataset (240 individuals listed in popmap_canada.txt). 
-You should have already run the script ```~/scripts/gstacks_stacks.sh```. 
+You should have already run the script ```$CLUSTER_SCRATCH/AdapGenom/scripts/gstacks_stacks.sh```. 
 Now, run ```populations``` on the new catalog twice, once for all individuals, and once for just the Canadian samples. What do you need to modify here?
 ```
-cd ~/stacks
+cd ../
 mkdir populations_2lin_random
-populations -P ~/stacks/gstacks_2lin/ -M ~/scripts/00_documents/popmap_2lin.txt -O ~/stacks/populations_2lin_random -t 4 -p 2 -r 0.8 --fstats --vcf --genepop --structure --write-random-snp
+populations -P ./gstacks_2lin/ -M ../scripts/00_documents/popmap_2lin.txt -O ./populations_2lin_random -t 4 -p 2 -r 0.8 --fstats --vcf --genepop --structure --write-random-snp
+```
+i.e., 
+```
+mkdir populations_all_random
+populations -P ./gstacks/ -M ../scripts/00_documents/popmap_all.txt -O ./populations_all_random -t 4 -p 2 -r 0.8 --fstats --vcf --genepop --structure --write-random-snp
+
+mkdir -p gstacks_canada
+gstacks -I $CLUSTER_SCRATCH/AdapGenom/bamfiles -M $CLUSTER_SCRATCH/AdapGenom/scripts/popmap_canada.txt -O gstacks_canada -t 3
+mkdir populations_canada_random
+populations -P ./gstacks_canada/ -M ../scripts/00_documents/popmap_canada.txt -O ./populations_canada_random -t 4 -p 2 -r 0.8 --fstats --vcf --genepop --structure --write-random-snp
 ```
  
 Make sure you print these outputs in each of these two folders ```populations_all_random``` and ```populations_canada_random```.
@@ -232,7 +246,7 @@ If you are struggling with this last step, have a look at the solution [here](./
 ## Step 4. Variant calling from whole genome resequencing data
 First, let's set up new folders for these analyses
 ```
-cd
+cd $CLUSTER_SCRATCH/AdapGenom
 mkdir wgr #for whole genome resequencing
 mkdir wgr/snps_bcftools
 ```
@@ -241,12 +255,13 @@ mkdir wgr/snps_bcftools
 Copy bam files (symbolic links) and their indexes storing aligned reads to reference genome
 ```
 cd wgr
-ln -s /home/ubuntu/Share/WGS_bam/*bam* .
+ln -s $CLUSTER_SCRATCH/AdapGenom/Share/WGS_bam/*bam* .
 ls *.bam > bams_list.txt ### create list of bam files
 ```
 Call variants using bcftools
 ```
-bcftools mpileup -Ou -f ~/Share/ressources/genome_mallotus_dummy.fasta -b bams_list.txt -r Chr1 -q 5 -I -a AD,DP,SP,ADF,ADR -d 200 | bcftools call - -mv -Ov > snps_bcftools/capelin_wgs_unfiltered.vcf
+ml bcftools
+bcftools mpileup -Ou -f $CLUSTER_SCRATCH/AdapGenom/Share/ressources/genome_mallotus_dummy.fasta -b bams_list.txt -r Chr1 -q 5 -I -a AD,DP,SP,ADF,ADR -d 200 | bcftools call - -mv -Ov > snps_bcftools/capelin_wgs_unfiltered.vcf
 
 ```
 Variant filtering is done in two steps. First we use 'bcftools filter' to filter SNPs based on mapping quality. Then, we apply a series of filters using VCFtools. Note that I'm calling variants from chromosome 1 only to save time. 
@@ -273,7 +288,7 @@ grep -v "#" capelin_wgs_filtered.vcf | wc -l
 
 Because the variant calling takes quite some time, you can copy the original unfiltered and clean files to your working directory to explore the different files and play with filtering.
 ```
-cp ~/Share/WGS_bam/snps_bcftools/capelin_wgs_*.vcf ~/wgr/snps_bcftools/.
+cp $CLUSTER_SCRATCH/AdapGenom/Share/WGS_bam/snps_bcftools/capelin_wgs_*.vcf $CLUSTER_SCRATCH/AdapGenom/wgr/snps_bcftools/.
 ```
 What is the proportion of SNPs surviving filters? How many are left? According to your dataset and needs, you may want to change or tweak these filters.
 
