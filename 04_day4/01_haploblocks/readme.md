@@ -2,8 +2,8 @@
 IMPORTANT: Please copy all the folder 04_day4 from `~/Share` into you repository on the AWS server. Please copy it in your own computer and try to follow the same folder architecture when moving your files.
 
 ```
-cd 
-cp -r ~/Share/physalia_adaptation_course/04_day4 .
+cd $CLUSTER_SCRATCH/AdapGenom/
+cp -r $CLUSTER_SCRATCH/AdapGenom/Share/physalia_adaptation_course/04_day4 .
 cd 04_day4/01_haploblocks
 ```
 We will run all commands from this folder.
@@ -229,9 +229,12 @@ We need to add --allow-extra-chromosome since we are not working with human data
 gunzip 02_data/canada.vcf.gz
 
 #extract a reduced vcf 
+ml biocontainers
+ml vcftools
 vcftools --vcf 02_data/canada.vcf --chr Chr4 --maf 0.05 --recode --out 03_ld/maf0.05_chr4
 
 #format for plink
+ml plink
 plink --vcf 03_ld/maf0.05_chr4.recode.vcf --make-bed --out 03_ld/maf0.05_chr4
 
 #calculate ld
