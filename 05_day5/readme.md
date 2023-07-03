@@ -5,8 +5,8 @@ Today, we will explore SNP annotation to see if they fall on genes of known func
 First of all,  please copy into your directory the folder 05_day5, open it and we will work from there all day.
 
 ```
-cd
-cp -r ~/Share/physalia_adaptation_course/05_day5 .
+cd $CLUSTER_SCRATCH/AdapGenom/
+cp -r $CLUSTER_SCRATCH/AdapGenom/Share/physalia_adaptation_course/05_day5 .
 cd 05_day5
 ```
 
@@ -14,14 +14,14 @@ Now you should have everything we need for today. You can explore the different 
 `ls 02_data` in which you will find the vcf, `ls 03_outliers` in which I put the .txt files that we exported on day 3 when analysing the association with temperature, and on day4 when analysing divergence between haploblocks or between sexes.
 I also put here the list of all SNPs present in the vcf. You can look at each file with the command `head 03_outliers/SNP_pos.txt` for instance.
 
-The annotated transcriptome (which is generally in .gff format) as well as the transposition onto the genome in an annotation table are located at the following path `~/Share/ressources/`. A copy of the .gff transcriptome is inside the 02_data folder.
+The annotated transcriptome (which is generally in .gff format) as well as the transposition onto the genome in an annotation table are located at the following path `$CLUSTER_SCRATCH/AdapGenom/Share/ressources/`. A copy of the .gff transcriptome is inside the 02_data folder.
 You don't need to copy them as we have prepared simplified files (in R, simply selecting the relevant column) when needed. You may want to have a look to get a sense of what it looks like.
 ``` 
-less ~/Share/ressources/genome_mallotus_dummy.gff3
+less $CLUSTER_SCRATCH/AdapGenom/Share/ressources/genome_mallotus_dummy.gff3
 ``` 
 press "q" to exit the less visualisation
 ```
-less ~/Share/ressources/genome_mallotus_dummy_annotation_table.tsv
+less $CLUSTER_SCRATCH/AdapGenom/Share/ressources/genome_mallotus_dummy_annotation_table.tsv
 ``` 
 
 ## Step 1. SNP annotation with SNPeff 
@@ -35,14 +35,14 @@ If you want to re-creat it, the .gff is inside the 02_data while the reference g
 If you want to, you can look at the database by doing:
 
 ```
-java -jar ~/Share/ressources/snpEff/snpEff.jar dump genome_mallotus_dummy | less
+java -jar $CLUSTER_SCRATCH/AdapGenom/Share/ressources/snpEff/snpEff.jar dump genome_mallotus_dummy | less
 ```
 It may take a minute to open. To exit "less" simply press "q"
 
 #### Annotate the vcf 
 Now we can annotate our VCF. As you may have gotten used to by now, we use a raw VCF file in the folder 02_data and will write the output into the folder 04_snpEff in which we will have all subsequent files related to the snpEff analyses.
 ```
-java -Xmx4g -jar ~/Share/ressources/snpEff/snpEff.jar genome_mallotus_dummy 02_data/canada.vcf > 04_snpEff/canada_annotated.vcf
+java -Xmx4g -jar $CLUSTER_SCRATCH/AdapGenom/Share/ressources/snpEff/snpEff.jar genome_mallotus_dummy 02_data/canada.vcf > 04_snpEff/canada_annotated.vcf
 ```
 Let's look at the new vcf
 ```
@@ -138,6 +138,8 @@ the command ">" redirect the output in the file of your choice
 With the command wc -l we will count the lines to see how many transcripts intersect with our outliers
 
 ```
+ml biocontainers
+ml bedtools
 bedtools intersect -a 05_bed/outlier_temp_rda.bed -b 05_bed/genome_mallotus_dummy_annotation_simplified.bed -wb > 05_bed/outlier_temp_rda.intersect
 cat 05_bed/outlier_temp_rda.intersect | wc -l
 head 05_bed/outlier_temp_rda.intersect
@@ -268,6 +270,7 @@ head(all_transcripts_unique)
 Now we run goseq function (nullp) to prepare the data and integrate length bias. It requires vectors so here we go transforming data:
 
 ```
+library(goseq)
 measured_genes = as.vector(all_transcripts_unique$TranscriptName)
 outliers_genes = as.vector(all_transcripts_unique$outliers_temp_rda)
 length = as.vector(all_transcripts_unique$length)
